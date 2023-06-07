@@ -1,0 +1,125 @@
+---
+title: "CITS5551 - Group3"
+author: "Data Analysis"
+output: html_notebook
+---
+
+### Introduction
+My data comes from Kaggle. License is Public Domain.https://www.kaggle.com/datasets/arshid/iris-flower-dataset?select=IRIS.csv
+The Iris flower data set is a multivariate data set introduced by the British statistician and biologist Ronald Fisher in his 1936 paper The use of multiple measurements in taxonomic problems. It is sometimes called Anderson's Iris data set because Edgar Anderson collected the data to quantify the morphologic variation of Iris flowers of three related species. The data set consists of 50 samples from each of three species of Iris (Iris Setosa, Iris virginica, and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimeters.
+
+
+### Data loading, full setup, and overall database data
+```{r}
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(hexbin)
+library(party)
+library(rpart)
+library(rpart.plot)
+library(tidyverse)
+library(skimr)
+library(DataExplorer)
+library(pROC)
+library(tidyverse)
+library(randomForest)
+library(caret)
+library(e1071)
+library(fpc)
+```
+Load the original database:
+```{r}
+IRIS <-read.csv("/Users/ame/OneDrive/AME 2022 SEMESTER 1/CITS5551/Project/IRIS.csv")
+IRIS
+```
+
+Analyze the data with str( ):
+```{r}
+str(IRIS)
+```
+
+Analyze the data with head( ):
+```{r}
+head(IRIS)
+```
+
+Count the number of NA for each classification:
+```{r}
+apply(is.na(IRIS), 2, sum)
+```
+
+#### All data transformations are done separately in each Topic, including data cleansing
+### [1]Topic of sepal
+
+Data cleaning and creation:
+```{r}
+sepal <-subset(IRIS,select=c(sepal_length,sepal_width,species))   
+sepal
+ggplot(sepal,aes(x=sepal_length,y=sepal_width,color=species),)+geom_point()+ggtitle("") 
+ggplot(sepal,aes(x=sepal_length,y=sepal_width,color=species,fill="white"))+geom_violin(fill="steelblue",alpha=.6)+ggtitle("")
+```
+### [2]Topic of petal
+
+Data cleaning and creation:
+```{r}
+petal <-subset(IRIS,select=c(petal_length,petal_width,species)) 
+petal
+ggplot(petal,aes(x=petal_length,y=petal_width,color=species),)+geom_point()+ggtitle("") 
+
+ggplot(petal,aes(x=petal_length,y=petal_width,color=species,fill="white"))+geom_violin(fill="steelblue",alpha=.6)+ggtitle("")
+```
+
+```{r}
+data1 <- na.omit(IRIS)
+plot_missing(data1)     #Show missing values
+data1$species<- factor(data1$species)     #Convert numeric category to factor category
+skim(data1)            #Skim data after data processing
+table(data1$species)    #Distribution of dependent variables
+   
+
+#The set. Seed() function is used to ensure that the random numbers you randomly generate are consistent
+trains <- createDataPartition(
+  y= data1$species,
+  p=0.7,
+  list= F
+  
+)
+traindata <- data1[trains,]     #70% training data      
+testdata <- data1[-trains,]     #30% testing data
+#Distribution of dependent variables after splitting
+table(traindata$species)   
+table(testdata$species)   
+colnames(data1)
+
+#Dependent variable and independent variable construction formula:
+form_clsm <- as.formula(
+  paste0(
+    "species ~ ",
+    paste(colnames(traindata)[1:4],collapse = " + ")
+  )
+)
+#Building decision tree model
+set.seed(35)
+fit_dt_clsm <- rpart(
+  form_clsm,
+  data = traindata,
+  method = "anova",
+  parms = list(split = "information"),
+  control = rpart.control(cp=0.005) 
+  )
+#Complexity related data
+printcp(fit_dt_clsm)
+plotcp(fit_dt_clsm)
+#post-pruning
+fit_dt_clsm_pruned <- prune(fit_dt_clsm, cp = 0.0016)
+#Variable importance
+fit_dt_clsm_pruned$variable.importance
+varimpdata <- data.frame(importance = fit_dt_clsm_pruned$variable.importance)
+varimpdata 
+#Drawing
+ggplot(varimpdata,aes(x = as_factor(rownames(varimpdata)),y= importance))+geom_col() + labs(x= "variables")+ theme(axis.text.x = element_text(angle = 15,hjust = 1))+ theme_classic()
+```
+### Conclusion
+We have completed the overview of CSV files, data cleaning, data analysis, data visualization, and variable importance analysis.
+

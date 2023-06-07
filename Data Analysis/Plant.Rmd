@@ -1,0 +1,48 @@
+---
+title: 'Data Analysis '
+output:
+  pdf_document: default
+  html_notebook: default
+---
+### Introduction
+The plant file generated after our own plant measurement software.
+
+### Data loading, full setup, and overall database data
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+```
+Load the original database:
+```{r}
+Plant <-read.csv("/Users/liuyu/Library/CloudStorage/OneDrive-个人/AME\ 2022\ SEMESTER\ 1/CITS5551/Project/Exp11-result.csv")
+Plant
+```
+
+Analyze the data with str( ):
+```{r}
+str(Plant)
+```
+
+Analyze the data with summary( ):
+```{r}
+summary(Plant)
+```
+
+Analyze the data with head( ):
+```{r}
+head(Plant)
+```
+
+Count the number of NA for each classification:
+```{r}
+apply(is.na(Plant), 2, sum)
+```
+
+
+```{r}
+ggplot(Plant,aes(x=X,y=Length),)+geom_point()+ggtitle("Plant length") 
+```
+
+
