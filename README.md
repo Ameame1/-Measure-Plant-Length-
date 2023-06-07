@@ -81,6 +81,8 @@ our project, whether it’s helping him write his paper, or developing the progr
 further. I, and a few others, have agreed to help if he needed assistance.
 
 ## Author
+[<img src="Figures/logo.png" width="200">](https://github.com/Ameame1/Measure-Plant-Length)
+
 **Ame Liu** _22910358@student.uwa.edu.au_
 
 **Gabriel Nge** _22478142@student.uwa.edu.au_
