@@ -1,4 +1,4 @@
-# Proj-3-Measuring-plant-length
+# Automatically Measure Plant Length Using Processing Techniques
 [![Figures/UWA.png](Figures/UWA.png)](https://www.rdi.uwa.edu.au/innovations-in-action)
 ## Supervised by [**___Atif Mansoor___**](https://research-repository.uwa.edu.au/en/persons/atif-mansoor)
 
